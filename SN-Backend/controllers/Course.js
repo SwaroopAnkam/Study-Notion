@@ -1,15 +1,16 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
-const Tag = require("../models/Tags");
+const Category = require("../models/Category");
 const {uploadMediaToCloudinary} = require("../utils/mediaUploader");
+require("dotenv").config;
 
 exports.createCourse = async(req, res) => {
     try{
-        const {courseName, courseDescription, whatYouWillLearn, price, tag} = req.body;
+        const {courseName, courseDescription, whatYouWillLearn, price, category} = req.body;
 
         const thumbnail = req.files.thumbnailImage;
 
-        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !thumbnail){
+        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail){
             return res.status(400).json({
                 success : false,
                 message : "All Fields Are Required, Please Fill All The Details",
@@ -19,11 +20,11 @@ exports.createCourse = async(req, res) => {
         const instructorId = req.user._id;
         
 
-        const tagDetails = await Tag.findById(tag);
-        if(!tagDetails){
+        const categoryDetails = await Category.findById(category);
+        if(!categoryDetails){
             return res.status(404).json({
                 success : false,
-                message : "Tag Details Not Found",
+                message : "Category Details Not Found",
             });
         }
 
@@ -35,7 +36,7 @@ exports.createCourse = async(req, res) => {
             instructor : instructorId,
             whatYouWillLearn : whatYoutWillLearn,
             price,
-            tag : tagDetails._id,
+            category : categoryDetails._id,
             thumbnail : thumbnailImage.secure_url,
         })
 
@@ -49,8 +50,8 @@ exports.createCourse = async(req, res) => {
             {new : true},
         )
 
-        await Tag.indByIdAndUpdate(
-            {_id : tagDetails._id},
+        await Category.findByIdAndUpdate(
+            {_id : categoryDetails._id},
             {
                 $push: {
                     courses : newCourse._id,
@@ -85,13 +86,13 @@ exports.showAllCourses = async(req, res) => {
             courseDescription : true,
             whatYouWillLearn : true,
             price : true,
-            tag : true,
+            category : true,
             thumbnail : true,
         })
         res.status(200).json({
             success : true,
             message :  "All Courses Returned Successfully",
-            allTags,
+            allCourses,
         })
     }
     catch(error){
