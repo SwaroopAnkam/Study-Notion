@@ -8,11 +8,6 @@ const cookie = require("cookie-parser");
 require("dotenv").config;
 
 
-
-
-
-
-// OTP for SignUp
 // TODO : email valididation and alternate method for generation of otp by using other packages
 
 exports.sendOTP = async(req, res) => {
@@ -68,8 +63,6 @@ exports.sendOTP = async(req, res) => {
     }
 
 }
-
-// signUp
 
 exports.signUp = async(req,res) => {
     try{
@@ -157,8 +150,6 @@ exports.signUp = async(req,res) => {
 }
 
 
-//login
-
 exports.login = async(req,res) => {
     try{
         const {email,password} = req.body
@@ -224,7 +215,71 @@ exports.login = async(req,res) => {
 }
 
 
-//change password
 exports.changePassword = async(req,res) => {
-    
+    try{
+        const userDetails = await User.findById(req.user._id);
+
+        const {oldPassword, newPassword, confirmPassword} = req.body;
+
+        const isPasswordMatch = await bcrypt.compare(
+            oldPassword, 
+            userDetails.password,
+        );
+
+        if(!isPasswordMatch){
+            return res
+            .status(401).json({ 
+                success : false, 
+                message : "The Password is Incorrect"
+            });
+        }
+
+        if(newPassword !== confirmPassword){
+            return res.status(400).json({
+				success : false,
+				message : "The Password and Confirm Password does not Match",
+			});
+        }
+
+        const encryptedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedUserDetails = await User.findByIdAndUpdate(
+			req.user.id,
+			{ password : encryptedPassword},
+			{ new : true }
+		);
+
+        try{
+            const emailResponse = await mailSender(
+                updatedUserDetails.email,
+				passwordUpdated(
+					updatedUserDetails.email,
+					`Password Updated Successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
+				)
+            )
+            console.log("Email Sent Successfully:", emailResponse.response);
+
+        }
+        catch(error){
+            console.error("Error Occurred While Sending Email:", error);
+			return res.status(500).json({
+				success : false,
+				message : "Error Occurred While Sending Email",
+				error : error.message,
+			});
+        }
+        return res
+			.status(200)
+			.json({ success : true, 
+                    message: "Password Updated Successfully" 
+            });
+
+    }
+    catch(error){
+        console.error("Error Occurred While Updating Password:", error);
+		return res.status(500).json({
+			success : false,
+			message : "Error Occurred While Updating Password",
+			error : error.message,
+		});
+    }
 }
