@@ -50,3 +50,69 @@ exports.showAllCategories = async(req, res) => {
         })
     }
 }
+
+exports.categoryPageDetails = async(req, res) => {
+    try{
+        const categotyId = req.body;
+        
+        const selectedCategory = await Category.findById(categoryId)
+        .populate("Course")
+        .exec();
+
+        console.log(selectedCategory);
+
+        if(!selectedCategory){
+            console.log("Category Not Found.");
+			return res
+				.status(404)
+				.json({ success : false,
+                        message : "Category Not Found"
+                    });
+        }
+
+        if(selectedCategory.courses.length == 0){
+            console.log("No Courses Found for the Selected Category.");
+			return res.status(404).json({
+				success : false,
+				message : "No Courses Found for the Selected Category.",
+			});
+        }
+
+        const selectedCourses = selectedCategory.courses;
+
+        const categoriesExceptSelected = await Category.findById({
+            _id: { $ne: categoryId },
+        })
+        .populate("Course")
+        .exec();
+
+        let differentCourses;
+        for(const category of categoriesExceptSelected){
+            differentCourses.push(...category.courses);
+        };
+
+        const allCategories = await Category.find().populate("courses");
+		const allCourses = allCategories.flatMap((category) => category.courses);
+		const mostSellingCourses = allCourses
+			.sort((a, b) => b.sold - a.sold)
+			.slice(0, 10);
+
+            res.status(200).json({
+                selectedCourses : selectedCourses,
+                differentCourses : differentCourses,
+                mostSellingCourses : mostSellingCourses,
+            });
+
+    }
+    catch(error){
+        return res.status(500).json({
+			success : false,
+			message : "Internal Server Error",
+			error : error.message,
+		});
+	}   
+}
+
+// create top rated course
+
+

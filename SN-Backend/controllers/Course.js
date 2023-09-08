@@ -34,7 +34,7 @@ exports.createCourse = async(req, res) => {
             courseName,
             courseDescription,
             instructor : instructorId,
-            whatYouWillLearn : whatYoutWillLearn,
+            whatYouWillLearn : whatYouWillLearn,
             price,
             category : categoryDetails._id,
             thumbnail : thumbnailImage.secure_url,
@@ -53,7 +53,7 @@ exports.createCourse = async(req, res) => {
         await Category.findByIdAndUpdate(
             {_id : categoryDetails._id},
             {
-                $push: {
+                $push : {
                     courses : newCourse._id,
                 }
             },
@@ -101,5 +101,51 @@ exports.showAllCourses = async(req, res) => {
             message : "Cannot Fetch Course Data",
             error : error.message,
         })
+    }
+}
+
+exports.getAllCourseDetails = async(req, res) => {
+    try{
+        const courseId = req.body;
+
+        const allCourseDetails = await Course.find(
+            {_id : courseId})
+            .populate(
+                {
+                    path : "instructor",
+                    populate : {
+                        path : "additionalDetails",
+                    },
+                }
+            )
+            .populate("category")
+            .populate("ratingAndreviews")
+            .populate({
+                path : "courseContent",
+                populate : {
+                    path : "subSection",
+                },
+            })
+            .exec();
+
+            if(!allCourseDetails) {
+                return res.status(400).json({
+                    success : false,
+                    message : `Could Not Find the Course with ${courseId}`,
+                });
+            }
+            //return response
+            return res.status(200).json({
+                success : true,
+                message : "Course Details fetched successfully",
+                data : courseDetails,
+            })    
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({
+            success : false,
+            message : error.message,
+        });
     }
 }
