@@ -46,4 +46,87 @@ exports.createSubSection = async(req, res) => {
     }
 }
 
-// needed to define updateSubSection and deleteSubSection handlers
+exports.updateSubSection = async(req, res) => {
+    try{
+        const {subSectionId, title, description} = req.body;
+
+        const subSectionDetails = await SubSection.findById(subSectionId);
+
+        if(!subSectionDetails){
+            return res.status(404).json({
+                success : false,
+                message : "SubSection Not Found",
+              })
+        }
+
+        if(title !== undefined){
+            subSectionDetails.title = title;
+        }
+
+        if(description !== undefined){
+            subSectionDetails.description = description;
+        }
+
+        if(req.files && req.files.video !== undefined){
+            const video = req.files.video
+            const uploadDetails = await uploadMediaToCloudinary(
+               video,
+               process.env.FOLDER_NAME
+            )
+            subSectionDetails.videoUrl = uploadDetails.secure_url
+            subSectionDetails.timeDuration = `${uploadDetails.duration}`
+        }
+        await subSection.save()
+
+        return res.json({
+            success : true,
+            message : "Section Updated Successfully",
+          })
+    }
+    catch(error){
+        console.error(error)
+        return res.status(500).json({
+        success : false,
+        message : "An Error Occurred While Updating the Section",
+      })
+    }
+}
+
+exports.deleteSubSection = async(req, res) => {
+    try{
+        const {subSectionId, sectionId} = req.body;
+
+        const subSection = await SubSection.findByIdAndDelete({ _id: subSectionId })
+  
+        if (!subSection) {
+        return res
+            .status(404)
+            .json({ 
+                success : false, 
+                message : "SubSection Not Found" 
+            })
+        }
+
+        await Section.findByIdAndUpdate(
+            { _id : sectionId },
+            {
+              $pull : {
+                subSection : subSectionId,
+              },
+            }
+        )
+
+        return res.json({
+            success: true,
+            message: "SubSection Deleted Successfully",
+        })
+
+    }
+    catch(error){
+        console.error(error)
+        return res.status(500).json({
+        success : false,
+        message : "An Error Occurred While Deleting the SubSection",
+      })
+    }
+}
