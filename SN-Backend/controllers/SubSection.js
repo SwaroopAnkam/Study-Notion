@@ -1,7 +1,7 @@
 const SubSection = require("../models/SubSection");
 const Section = require("../models/Section");
 const { uploadMediaToCloudinary } = require("../utils/mediaUploader");
-require("dotenv").config;
+require("dotenv").config(); 
 
 exports.createSubSection = async(req, res) => {
     try{
@@ -10,18 +10,21 @@ exports.createSubSection = async(req, res) => {
 
         if(!sectionId || !title || !timeDuration || !description || !video){
              return res.status(400).json({
-                success:false,
-                message:"All Fields Are Required",
+                success : false,
+                message : "All Fields Are Required",
             });
         }
 
-        const uploadVideo = await uploadMediaToCloudinary(video, process.env.FOLDER_NAME);
-
+        const uploadVideo = await uploadMediaToCloudinary(
+            video,
+            process.env.FOLDER_NAME
+          );
+      
         const newSubSection = await SubSection.create({
             title : title,
             timeDuration : timeDuration,
             description : description,
-            videoUrl : uploadDetails.secure_url,
+            videoUrl : uploadVideo.secure_url,
         })
 
         const updatedSectionDetails = await Section.findByIdAndUpdate(
@@ -34,7 +37,7 @@ exports.createSubSection = async(req, res) => {
         return res.status(200).json({
                     succcess : true,
                     message : "SubSection Created Successfully",
-                    updatedSection,
+                    updatedSectionDetails,
                 });                                                     
     }
     catch(error){
@@ -69,25 +72,25 @@ exports.updateSubSection = async(req, res) => {
 
         if(req.files && req.files.video !== undefined){
             const video = req.files.video
-            const uploadDetails = await uploadMediaToCloudinary(
+            const uploadVideo = await uploadMediaToCloudinary(
                video,
                process.env.FOLDER_NAME
             )
-            subSectionDetails.videoUrl = uploadDetails.secure_url
+            subSectionDetails.videoUrl = uploadVideo.secure_url
             subSectionDetails.timeDuration = `${uploadDetails.duration}`
         }
         await subSection.save()
 
         return res.json({
             success : true,
-            message : "Section Updated Successfully",
+            message : "SubSection Updated Successfully",
           })
     }
     catch(error){
         console.error(error)
         return res.status(500).json({
         success : false,
-        message : "An Error Occurred While Updating the Section",
+        message : "An Error Occurred While Updating the SubSection",
       })
     }
 }

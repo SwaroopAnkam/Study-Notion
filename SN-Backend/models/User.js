@@ -1,38 +1,43 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    
     firstName : {
         type : String,
         required : true,
         trim : true,
+        minlength : 2, 
+        maxlength : 50, 
     },
     lastName : {
         type : String,
-        required : true,
+        required : true, 
         trim : true,
+        minlength : 2, 
+        maxlength : 50, 
     },
-    email : {
+    email: {
         type : String,
-        required : true,
+        required : true, 
         trim : true,
+        unique : true,
+        match : /^\S+@\S+\.\S+$/, 
     },
     password : {
         type : String,
-        required : true,
+        required : true, 
     },
     accountType : {
         type : String,
         enum : ["Admin", "Student", "Instructor"],
-        required : true,
+        required : true, 
     },
-    active: {
-        type: Boolean,
-        default: true,
+    active : {
+        type : Boolean,
+        default : true,
     },
-    approved: {
-        type: Boolean,
-        default: true,
+    approved : {
+        type : Boolean,
+        default : true,
     },
     additionalDetails : {
         type : mongoose.Schema.Types.ObjectId,
@@ -43,27 +48,24 @@ const userSchema = new mongoose.Schema({
         {
             type : mongoose.Schema.Types.ObjectId,
             ref : "Course",
-        }
+        },
     ],
     image : {
         type : String,
-        required : true,
+        required : true, 
     },
     token : {
-        type : String
+        type : String,
     },
     resetTokenExpires : {
-        type:Date,
+        type : Date,
     },
     courseProgress : [
         {
             type : mongoose.Schema.Types.ObjectId,
-            ref : "courseProgress",
-        }
+            ref : "CourseProgress",
+        },
     ],
+}, { timestamps : true });
 
-},
-{timestamps : true}
-);
-
-module.exports = mongoose.model("User", userSchema );
+module.exports = mongoose.model("User", userSchema);

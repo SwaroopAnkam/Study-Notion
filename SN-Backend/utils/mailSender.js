@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config;
+require("dotenv").config();
+
 
 const mailSender = async (email, title, body) => {
     try{
@@ -12,17 +13,18 @@ const mailSender = async (email, title, body) => {
         })
 
         let info = await transporter.sendMail({
-            from: 'StudyNotion',
-            to:`${email}`,
-            subject: `${title}`,
-            html: `${body}`,
+            from : "StudyNotion",
+            to : email,
+            subject : title,
+            html : body,
         })
 
-        console.log(info);
+        console.log("Email sent successfully:", info.response);
         return info;
     }
-    catch (err) {
-        console.log(error.message);
+    catch (error) {
+        console.error("Error sending email:", error.message);
+        throw error;
     }
 };
 

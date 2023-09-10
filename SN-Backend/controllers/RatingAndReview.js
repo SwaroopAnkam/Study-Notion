@@ -1,15 +1,15 @@
 const RatingAndReview = require("../models/RatingAndReviews");
 const Course = require("../models/Course");
-
+const mongoose = require("mongoose"); 
 
 exports.createRating = async(req, res) => {
     try{
-        const userId = req.body._id;
+        const userId = req.user._id;
 
         const {rating, review, courseId} = req.body;
 
         if(!rating || !review || !courseId){
-            return res.status(404).json({
+            return res.status(400).json({
                 success : false,
                 message : "Required Details Not Found",
             });
@@ -20,10 +20,10 @@ exports.createRating = async(req, res) => {
                                     studentsEnrolled: {$elemMatch: {$eq : userId} },
         });
 
-        if(!courseDetails){
-            return res.status(404).json({
-                success : false,
-                message : "Student is Not Enrolled in the Course",
+        if (!courseDetails) {
+            return res.status(403).json({
+              success : false,
+              message : "Student is Not Enrolled in the Course",
             });
         }
 
@@ -57,26 +57,27 @@ exports.createRating = async(req, res) => {
         
         console.log(updatedCourseDetails);
     
-        return res.status(200).json({
+        return res.status(201).json({
             success : true,
             message : "Rating and Review Created Successfully",
             ratingAndReview,
-        })                                                        
+        });                                                     
 
     }
     catch(error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({
             success : false,
-            message : error.message,
-        })
+            message : "Failed to create rating and review",
+            error : error.message,
+    });
     }
 }
 
 
 exports.getAverageRating = async(req, res) => {
     try{
-        const courseId = req.body;
+        const courseId = req.body.courseId; 
 
         const averageRating = await RatingAndReview.aggregate([
             {
@@ -103,7 +104,7 @@ exports.getAverageRating = async(req, res) => {
 
         return res.status(200).json({
             success : true,
-            message : 'Average Rating is 0, no Ratings Given Till Now',
+            message : "Average Rating is 0, no Ratings Given Till Now",
             avgRating :0,
         })
     }
@@ -111,7 +112,8 @@ exports.getAverageRating = async(req, res) => {
         console.log(error);
         return res.status(500).json({
             success : false,
-            message : error.message,
+            message : "Failed to fetch average rating",
+            error : error.message,
         })
     }
 }
@@ -119,7 +121,7 @@ exports.getAverageRating = async(req, res) => {
 exports.getAllRatingAndReviews = async(req, res) => {
     try{
         const allRatingAndReviews = await RatingAndReview.find({})
-                                            .sort({rating : "dec"})
+                                            .sort({rating : "desc"})
                                             .populate({
                                                 path : "user",
                                                 select : "firstName lastName email image",

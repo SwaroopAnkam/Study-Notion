@@ -1,20 +1,17 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-require("dotenv").config;
-
-
-//auth
+require("dotenv").config(); 
 
 exports.auth = async(req, res, next) => {
     try{
         const token = req.body.token || 
-                      req.cookie.token || 
-                      req.header("Authorisation").replace("Bearer ","");
+                      req.cookies.token || 
+                      req.header("Authorization").replace("Bearer ", "");
 
         if(!token){
             return res.status(401).json({
-                success:false,
-                message:'Token is Missing',
+                success : false,
+                message : "Token is Missing",
             });
         }
         
@@ -26,8 +23,8 @@ exports.auth = async(req, res, next) => {
         }
         catch(error){
             return res.status(401).json({
-                success:false,
-                message:'Token is Invalid',
+                success : false,
+                message : "Token is Invalid",
             });
         }
         next();
@@ -35,73 +32,69 @@ exports.auth = async(req, res, next) => {
     }
     catch(error){
         return res.status(401).json({
-            success:false,
-            message:'Something Went Wrong While Validating The Token',
+            success : false,
+            message : "Something Went Wrong While Validating The Token",
         });
     }
 }
 
-//isStudent
 
 exports.isStudent = async(req, res, next) => {
     try{
         
         if(req.user.accountType !== "Student"){
             return res.status(401).json({
-                success:false,
-                message:'This is a Protected Route For Students Only',
+                success : false,
+                message : "This is a Protected Route For Students Only",
             });
         }
         next();
     }
     catch{error}{
         return res.status(500).json({
-            success:false,
-            message:'User Role Cannot be Verified, Please Try Again'
+            success : false,
+            message : "User Role Cannot be Verified, Please Try Again",
         })
     }
 }
 
 
-// isInstructor
 
 exports.isInstructor = async(req, res, next) => {
     try{
         
         if(req.user.accountType !== "Instructor"){
             return res.status(401).json({
-                success:false,
-                message:'This is a Protected Route For Instructor Only',
+                success : false,
+                message : "This is a Protected Route For Instructor Only",
             });
         }
         next();
     }
     catch{error}{
         return res.status(500).json({
-            success:false,
-            message:'User Role Cannot be Verified, Please Try Again'
+            success : false,
+            message : "User Role Cannot be Verified, Please Try Again",
         })
     }
 }
 
-
-//isAdmin
 
 exports.isAdmin = async(req, res, next) => {
     try{
         
         if(req.user.accountType !== "Admin"){
             return res.status(401).json({
-                success:false,
-                message:'This is a Protected Route For Admin Only',
+                success : false,
+                message : "This is a Protected Route For Admin Only",
             });
         }
         next();
     }
     catch{error}{
         return res.status(500).json({
-            success:false,
-            message:'User Role Cannot be Verified, Please Try Again'
+            success : false,
+            message : "User Role Cannot be Verified, Please Try Again",    
         })
     }
 }

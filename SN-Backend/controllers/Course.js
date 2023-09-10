@@ -1,16 +1,15 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
 const Category = require("../models/Category");
-const {uploadMediaToCloudinary} = require("../utils/mediaUploader");
-require("dotenv").config;
+const { uploadMediaToCloudinary } = require("../utils/mediaUploader");
+require("dotenv").config();
 
-exports.createCourse = async(req, res) => {
-    try{
-        const {courseName, courseDescription, whatYouWillLearn, price, category} = req.body;
-
+exports.createCourse = async (req, res) => {
+    try {
+        const { courseName, courseDescription, whatYouWillLearn, price, category } = req.body;
         const thumbnail = req.files.thumbnailImage;
 
-        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail){
+        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail) {
             return res.status(400).json({
                 success : false,
                 message : "All Fields Are Required, Please Fill All The Details",
@@ -68,14 +67,13 @@ exports.createCourse = async(req, res) => {
         
 
 
-    }
-    catch(error){
+    }catch (error) {
         console.error(error);
         return res.status(500).json({
             success : false,
-            message : 'Failed to Create Course',
+            message : "Failed to Create Course",
             error : error.message,
-        })
+        });
     }
 }
 
@@ -106,7 +104,14 @@ exports.showAllCourses = async(req, res) => {
 
 exports.getAllCourseDetails = async(req, res) => {
     try{
-        const courseId = req.body;
+        const courseId = req.params.courseId;
+
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
+                success : false,
+                message : "Invalid Course ID",
+            });
+        }
 
         const allCourseDetails = await Course.find(
             {_id : courseId})
@@ -134,11 +139,10 @@ exports.getAllCourseDetails = async(req, res) => {
                     message : `Could Not Find the Course with ${courseId}`,
                 });
             }
-            //return response
             return res.status(200).json({
                 success : true,
                 message : "Course Details fetched successfully",
-                data : courseDetails,
+                data : allCourseDetails,
             })    
     }
     catch(error){
@@ -148,4 +152,4 @@ exports.getAllCourseDetails = async(req, res) => {
             message : error.message,
         });
     }
-}
+};

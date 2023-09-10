@@ -1,28 +1,37 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
-const {instance} = require("../config/razorpay");
+const { razorpayInstance } = require("../config/razorpay");
 const mailSender = require("../utils/mailSender");
-require("dotenv").config;
+const crypto = require("crypto"); 
+require("dotenv").config();
 
 exports.capturePayment = async(req, res) => {
     try{
-        const courseId = req.body;
+        const courseId = req.body.courseId;
         const userId = req.user._id;
 
-        if(!courseId){
-            return res.status(403).json({
-                success : false,
-                message : "Please Provide The Valid Course ID",
-            })
+        if (!courseId) {
+            return res.status(400).json({
+              success : false,
+              message : "Please Provide a Valid Course ID",
+            });
         }
+
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
+              success : false,
+              message : "Invalid Course ID",
+            });
+        }
+      
 
         try{
             const couurseDetails = await Course.findById(courseId);
             
-            if(!courseDetails){
-                return res.staus(403).json({
-                    success : false,
-                    message : "Could Not Find The Course Details",
+            if (!courseDetails) {
+                return res.status(404).json({
+                  success : false,
+                  message : "Course Details Not Found",
                 });
             }
 
@@ -31,7 +40,7 @@ exports.capturePayment = async(req, res) => {
             if(courseDetails.studentsEnrolled.includes(user_Id)){
                 return res.status(403).json({
                     success : false,
-                    message : "Student is Already Enrolled",
+                    message : "Student is Already Enrolled in this Course",
                 });
             }
         }
@@ -39,12 +48,13 @@ exports.capturePayment = async(req, res) => {
             console.error(error);
             return res.status(500).json({
                 success : false,
-                message : error.message,
-        });
+                message : "Error Fetching Course Details",
+                error : error.message,
+      });
         }
 
         const amount = courseDetails.price;
-        const currency = process.env.CURRENCY;
+        const currency = process.env.CURRENCY || "INR";
 
         const options = {
             amount : amount * 100,
@@ -57,7 +67,7 @@ exports.capturePayment = async(req, res) => {
         }
 
         try{
-            const paymentResponse = await instance.orders.create(options);
+            const paymentResponse = await razorpayInstance.orders.create(options);
             console.log(paymentResponse);
 
             return res.status(200).json({
@@ -71,19 +81,21 @@ exports.capturePayment = async(req, res) => {
             });
         }
         catch(error){
-            console.log(error);
-            res.status(401).json({
-                success : false,
-                message : "Could Not Initiate Order",
+            cconsole.error(error);
+            return res.status(500).json({
+              success : false,
+              message : "Could Not Initiate Payment Order",
+              error : error.message,
         });
         }
     }
     catch(error){
-        console.log(error);
-            res.status(401).json({
-                success : false,
-                message : "Could Not Capture Payment",
-        });
+        console.error(error);
+        return res.status(500).json({
+            success : false,
+            message : "Could Not Capture Payment",
+            error : error.message,
+    });
     }
 }
 
@@ -92,76 +104,79 @@ exports.verifySignature = async(req, res) => {
         const webhookSecret = process.env.WEBHOOK_SECRET;
         
         const signature = req.headers["x-razorpay-signature"];
+        const payload = JSON.stringify(req.body);
 
-        const hashedWebHookSecret = crypto.createHmac("sha256", webhookSecret);
-        hashedWebHookSecret.update(JSON.stringify(req.body));
-        const digest = hashedWebHookSecret.digest("hex");
-
-        if(signature == digest){
-            console.log("Payment Is Authorised");
-
-            const {courseId, userId} = req.body.payload.payment.entity.notes;
-
-            try{
-                const enrolledCourse = await Course.findByIdAndUpdate(
-                                                {_id : courseId},
-                                                {$push:
-                                                    {studentsEnrolled : userId}
-                                                },
-                                                {new : true},
-                )
-
-                if(!enrolledCourse){
-                    return res.status(500).json({
-                        success : false,
-                        message : "Course Not Found",
-                    });
-                }
-
-                console.log(enrolledCourse);
-
-                const enrolledStudent = await User.findByIdAndUpdate(
-                                                    {_id : userId},
-                                                    {$push : 
-                                                        {courses:courseId}
-                                                    },
-                                                    {new : true},
-                )
-
-                if(!enrolledStudent){
-                    return res.status(500).json({
-                        success : false,
-                        message : "User Not Added Into Enrollment",
-                    });
-                }
-                console.log(enrolledStudent);
- 
-                const emailResponse = await mailSender(
-                                        enrolledStudent.email,
-                                        "Congratulations from Study Notion",
-                                        "Congratulations, you are onboarded into new StudyNotion Course",
-                );
-
-                console.log(emailResponse);
-                return res.status(200).json({
-                    success : true,
-                    message : "Signature Verified and Course Added Successfully",
-                });
-
-            } 
-            catch(error){
-                console.log(error);
-                return res.status(500).json({
-                    success : false,
-                    message : error.message,
+        const hashedWebHookSecret = crypto
+        .createHmac("sha256", webhookSecret)
+        .update(payload)
+        .digest("hex");
+  
+        if (signature !== hashedWebHookSecret) {
+            return res.status(400).json({
+              success : false,
+              message : "Invalid Signature",
             });
-            }
         }
-    }
-    catch(error){
-        return res.status(400).json({
+      
+        const { courseId, userId } = req.body.payload.payment.entity.notes;
+      
+        try {
+            const enrolledCourse = await Course.findByIdAndUpdate(
+              courseId,
+              {
+                $push : {
+                  studentsEnrolled : userId,
+                },
+              },
+              { new : true }
+            );
+      
+            if (!enrolledCourse) {
+              return res.status(500).json({
+                success : false,
+                message : "Course Not Found",
+              });
+            }
+      
+            const enrolledStudent = await User.findByIdAndUpdate(
+              userId,
+              {
+                $push : {
+                  courses : courseId,
+                },
+              },
+              { new : true }
+            );
+      
+            if (!enrolledStudent) {
+              return res.status(500).json({
+                success : false,
+                message : "User Not Added to Enrollment",
+              });
+            }
+      
+            const emailResponse = await mailSender(
+              enrolledStudent.email,
+              "Congratulations from Study Notion",
+              "Congratulations, you are enrolled in a new StudyNotion Course"
+            );
+      
+            return res.status(200).json({
+              success : true,
+              message : "Signature Verified and Course Enrolled Successfully",
+            });
+          } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+              success : false,
+              message : error.message,
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          return res.status(400).json({
             success : false,
-            message : "Invalid request",
+            message : "Invalid Request",
         });
     }
-}
+};

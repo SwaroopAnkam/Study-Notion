@@ -14,10 +14,10 @@ exports.createSection = async(req, res) => {
         const newSection = await Section.create({sectionName});
 
         const updatedCourseDetails = await Course.findByIdAndUpdate(
-                                            {courseId},
+                                            courseId,
                                             {
                                                 $push : {
-                                                    courseContent:newSection._id,
+                                                    courseContent : newSection._id,
                                                 }
                                             },
                                             {new : true},
@@ -64,6 +64,7 @@ exports.updateSection = async(req, res) => {
         return res.status(200).json({
             success : true,
             message : "Section Updated Successfully",
+            updatedSection,
         });
     }
     catch(error){
@@ -108,6 +109,7 @@ exports.deleteSection = async(req, res) => {
         return res.status(200).json({
             success : true,
             message : "Section Deleted Successfully",
+            updatedCourseDetails,
         })                                
     }
     catch(error){
