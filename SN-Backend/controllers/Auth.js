@@ -116,7 +116,7 @@ exports.signUp = async (req, res) => {
         });
       }
   
-      const recentOTP = await OTP.findOne({ email }).sort({ createdAt: -1 }).limit(1);
+      const recentOTP = await OTP.findOne({ email }).sort({ createdAt: -1 });
       if (!recentOTP || recentOTP.otp !== otp) {
         return res.status(400).json({
           success : false,
@@ -132,11 +132,14 @@ exports.signUp = async (req, res) => {
         });
       }
 
+      let approved = "";
+		approved === "Instructor" ? (approved = false) : (approved = true);
+
       const profileDetails = await Profile.create({
         gender  : null,
         dateOfBirth : null,
         about : null,
-        contactNumber : contactNumber,
+        contactNumber : null,
       });
   
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -222,7 +225,7 @@ exports.login = async (req, res) => {
           httpOnly  : true,
         };
   
-        res.cookieParser("token", token, options).status(200).json({
+        res.cookie("token", token, options).status(200).json({
           success : true,
           token,
           user,

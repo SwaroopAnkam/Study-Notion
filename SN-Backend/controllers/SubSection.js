@@ -20,7 +20,7 @@ exports.createSubSection = async(req, res) => {
             process.env.FOLDER_NAME
           );
       
-        const newSubSection = await SubSection.create({
+        const subSectionDetails = await SubSection.create({
             title : title,
             timeDuration : timeDuration,
             description : description,
@@ -32,7 +32,7 @@ exports.createSubSection = async(req, res) => {
                                                             {$push : {
                                                                 subSection : subSectionDetails._id,
                                                             }},
-                                                            {new : true}).populate("SubSection").exec();
+                                                            {new : true}).populate("subSections").exec();
         console.log(updatedSectionDetails);                                                    
         return res.status(200).json({
                     succcess : true,

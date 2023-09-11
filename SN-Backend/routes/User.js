@@ -20,7 +20,7 @@ router.post("/signUp", signUp);
 router.post("/login", login);
 router.post("/changePassword", auth, changePassword); 
 
-router.post("/resetPasswordToken", resetPasswordToken);
-router.post("/resetPassword", resetPassword);
+router.post("/reset-Password-Token", resetPasswordToken);
+router.post("/reset-Password", resetPassword);
 
 module.exports = router;

@@ -44,7 +44,7 @@ const courseSchema = new mongoose.Schema({
         required : true,
     },
     tag : {
-        type : [string],
+        type : [String],
         required : true,
     },
     category : {
@@ -60,7 +60,7 @@ const courseSchema = new mongoose.Schema({
         }
     ],
     instructions : {
-		type : [String],
+		type : String,
 	},
 	status : {
 		type : String,

@@ -22,9 +22,9 @@ exports.createSection = async(req, res) => {
                                             },
                                             {new : true},
                                         ).populate({
-                                            path : "Section",
+                                            path : "courseContent",
                                             populate : {
-                                              path : "SubSection", 
+                                              path : "subSections", 
                                             },
                                           }).exec();
 
@@ -80,7 +80,7 @@ exports.updateSection = async(req, res) => {
 
 exports.deleteSection = async(req, res) => {
     try{
-        const {sectionId} = req.params
+        const {sectionId} = req.body;
         const {courseId} = req.body
 
         if(!sectionId || !courseId){

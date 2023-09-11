@@ -61,7 +61,7 @@ exports.resetPassword = async(req, res) => {
             });
         }
 
-        const user = await User.findOne({token : resetToken});
+        const user = await User.findOne({token : token});
         if(!user){
             return res.status(401).json({
                 success : false,
@@ -79,7 +79,7 @@ exports.resetPassword = async(req, res) => {
         const hashedPassword = await bcrypt.hash(password,10);
 
         await User.findOneAndUpdate(
-            {token : resetToken},
+            {token : token},
             {password : hashedPassword, token: null, resetTokenExpires: null},
             {new : true},
         )

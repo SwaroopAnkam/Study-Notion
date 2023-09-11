@@ -1,12 +1,13 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
 const Category = require("../models/Category");
+const mongoose = require("mongoose");
 const { uploadMediaToCloudinary } = require("../utils/mediaUploader");
 require("dotenv").config();
 
 exports.createCourse = async (req, res) => {
     try {
-        const { courseName, courseDescription, whatYouWillLearn, price, category } = req.body;
+        const { courseName, courseDescription, whatYouWillLearn, price, category, tag, instructions } = req.body;
         const thumbnail = req.files.thumbnailImage;
 
         if (!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail) {
@@ -16,8 +17,13 @@ exports.createCourse = async (req, res) => {
             });
         }
 
-        const instructorId = req.user._id;
-        
+        const status = req.body.status || "Draft";
+
+        if (!status || status === undefined) {
+			status = "Draft";
+		}
+
+        const instructorId = req.user.id;
 
         const categoryDetails = await Category.findById(category);
         if(!categoryDetails){
@@ -63,7 +69,7 @@ exports.createCourse = async (req, res) => {
             success : true,
             message : "Course Created Successfully",
             data : newCourse,
-        });
+        }); 
         
 
 
@@ -102,9 +108,9 @@ exports.showAllCourses = async(req, res) => {
     }
 }
 
-exports.getAllCourseDetails = async(req, res) => {
+exports.getCourseDetails = async(req, res) => {
     try{
-        const courseId = req.params.courseId;
+        const {courseId} = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(courseId)) {
             return res.status(400).json({
@@ -124,11 +130,11 @@ exports.getAllCourseDetails = async(req, res) => {
                 }
             )
             .populate("category")
-            .populate("ratingAndreviews")
+            // .populate("ratingAndreviews")
             .populate({
                 path : "courseContent",
                 populate : {
-                    path : "subSection",
+                    path : "subSections",
                 },
             })
             .exec();

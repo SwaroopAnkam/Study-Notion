@@ -1,20 +1,21 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadMediaToCloudinary } = require("../utils/mediaUploader");
+const mongoose = require("mongoose");
 
 exports.updateProfile = async(req, res) => {
     try{
         const {dateOfBirth="",about="", contactNumber, gender} = req.body;
-        const userId = req.user._id;
-
-        if(!userId) {
+        const userId = req.user.id;
+       
+        if(!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({
                 success : false,
                 message : "User ID is required to update the profile fields",
             });
         } 
 
-        const userDetails = await User.findById({userId});
+        const userDetails = await User.findById(userId);
         const profileId = userDetails.additionalDetails;
         const profileDetails = await Profile.findById(profileId);
 
@@ -40,9 +41,9 @@ exports.updateProfile = async(req, res) => {
 }
 
 
-exports.showProfileDetails = async(req, res) => {
+exports.getUserDetails = async(req, res) => {
     try{
-        const userId = req.user._id;
+        const userId = req.user.id;
         const userDetails = await User.findById(userId).populate("additionalDetails").exec();
 
         if (!userDetails) {
@@ -69,7 +70,7 @@ exports.showProfileDetails = async(req, res) => {
 
 exports.deleteAccount = async(req,res) => {
     try{
-        const userId = req.user._id;
+        const userId = req.user.id;
         console.log("Printing ID: ", req.user.id);
 
         const userDetails = await User.findById(userId);
