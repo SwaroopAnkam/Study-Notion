@@ -1,40 +1,40 @@
 const express = require("express");
-const router = express.Router(); 
+const router = express.Router();
 
 const {
-    createCourse,
-    showAllCourses,
-    getCourseDetails
+  createCourse,
+  showAllCourses,
+  getCourseDetails,
 } = require("../controllers/Course");
 
 const {
-    createCategory,
-    showAllCategories
+  createCategory,
+  showAllCategories,
 } = require("../controllers/Category");
 
 const {
-    createRating,
-    getAverageRating,
-    getAllRatingAndReviews
+  createRating,
+  getAverageRating,
+  getAllRatingAndReviews,
 } = require("../controllers/RatingAndReview");
 
 const {
-    createSection,
-    updateSection,
-    deleteSection
+  createSection,
+  updateSection,
+  deleteSection,
 } = require("../controllers/Section");
 
 const {
-    createSubSection,
-    updateSubSection,
-    deleteSubSection
+  createSubSection,
+  updateSubSection,
+  deleteSubSection,
 } = require("../controllers/SubSection");
 
 const {
-    auth,
-    isStudent,
-    isInstructor,
-    isAdmin
+  auth,
+  isStudent,
+  isInstructor,
+  isAdmin,
 } = require("../middlewares/auth");
 
 router.post("/createCourse", auth, isInstructor, createCourse);
