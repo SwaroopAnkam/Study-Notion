@@ -5,6 +5,8 @@ import HighlightText from "../components/core/HomePage/HighlightText";
 import CTAButton from "../components/core/HomePage/Button";
 import Banner from "../assets/Images/banner.mp4";
 import CodeBlocks from "../components/core/HomePage/CodeBlocks";
+import Footer from "../components/common/Footer";
+
 
 const Home = () => {
   return (
@@ -50,7 +52,7 @@ const Home = () => {
           </CTAButton>
         </div>
 
-        <div className="mx-3 my-12 shadow-blue-200">
+        <div className="mx-3 my-12 shadow-blue-200 shadow-md bg-gray-100">
           <video muted loop autoPlay>
             <source src={Banner} type="video/mp4" />
           </video>
@@ -113,6 +115,7 @@ const Home = () => {
           />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
