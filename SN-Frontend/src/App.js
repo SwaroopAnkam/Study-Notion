@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Navbar from "./components/common/Navbar";
 import OpenRoute from "./components/core/Auth/OpenRoute"
 import Signup from "./pages/Signup"
+import Login from "./pages/Login"
 
 function App() {
   return (
@@ -16,6 +17,14 @@ function App() {
           element={
             <OpenRoute>
               <Signup />
+            </OpenRoute>
+          }
+        />
+        <Route
+          path="login"
+          element={
+            <OpenRoute>
+              <Login />
             </OpenRoute>
           }
         />
