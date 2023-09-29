@@ -5,7 +5,7 @@ import { NavbarLinks } from "../../data/navbar-links";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-// import ProfileDropDown from "../core/Auth/ProfileDropDown";
+import ProfileDropDown from "../core/Auth/ProfileDropDown";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 
 const subLinks = [
@@ -90,7 +90,7 @@ const Navbar = () => {
         </nav>
 
         <div className="flex gap-x-4 items-center">
-          {user && user?.accountType != "Instructor" && (
+          {user && user?.accountType !== "Instructor" && (
             <Link to="/dashboard/cart" className="relative">
               <AiOutlineShoppingCart />
               {totalItems > 0 && <span>{totalItems}</span>}
@@ -110,7 +110,7 @@ const Navbar = () => {
               </button>
             </Link>
           )}
-          {/* {token !== null && <ProfileDropDown />} */}
+          {token !== null && <ProfileDropDown />}
         </div>
       </div>
     </div>
