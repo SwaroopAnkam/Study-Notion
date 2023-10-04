@@ -1,4 +1,4 @@
-import IconBtn from "./IconBtn";
+import IconBtn from "./IconBtn"
 
 export default function ConfirmationModal({ modalData }) {
   return (
@@ -24,5 +24,5 @@ export default function ConfirmationModal({ modalData }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

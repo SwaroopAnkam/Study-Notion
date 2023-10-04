@@ -1,7 +1,7 @@
 import { toast } from "react-hot-toast";
 
 // import { updateCompletedLectures } from "../../slices/viewCourseSlice";
-// import { setLoading } from "../../slices/profileSlice";
+// import { setLoading } from "../../slices/profileSlice";ƒ
 import { apiConnector } from "../apiConnector";
 import { courseEndpoints } from "../apis";
 
@@ -57,6 +57,7 @@ export const fetchCourseDetails = async (courseId) => {
   } catch (error) {
     console.log("COURSE_DETAILS_API API ERROR............", error);
     result = error.response.data;
+    console.log("result", result);
   }
   toast.dismiss(toastId);
   return result;
@@ -70,7 +71,8 @@ export const fetchCourseCategories = async () => {
     if (!response?.data?.success) {
       throw new Error("Could Not Fetch Course Categories");
     }
-    result = response?.data?.data;
+    result = response?.data?.allCategory
+    console.log("printing result", result);
   } catch (error) {
     console.log("COURSE_CATEGORY_API API ERROR............", error);
     toast.error(error.message);
@@ -82,9 +84,11 @@ export const addCourseDetails = async (data, token) => {
   let result = null;
   const toastId = toast.loading("Loading...");
   try {
+    console.log("printing data ", data);
+    console.log("printing token", token);
     const response = await apiConnector("POST", CREATE_COURSE_API, data, {
       "Content-Type": "multipart/form-data",
-      Authorisation: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     });
     console.log("CREATE COURSE API RESPONSE............", response);
     if (!response?.data?.success) {
@@ -106,7 +110,7 @@ export const editCourseDetails = async (data, token) => {
   try {
     const response = await apiConnector("POST", EDIT_COURSE_API, data, {
       "Content-Type": "multipart/form-data",
-      Authorisation: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     });
     console.log("EDIT COURSE API RESPONSE............", response);
     if (!response?.data?.success) {
