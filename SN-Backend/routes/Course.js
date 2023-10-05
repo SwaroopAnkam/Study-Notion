@@ -39,11 +39,11 @@ const {
 
 router.post("/createCourse", auth, isInstructor, createCourse);
 router.post("/addSection", auth, isInstructor, createSection);
-router.put("/updateSection", auth, isInstructor, updateSection);
-router.delete("/deleteSection", auth, isInstructor, deleteSection);
+router.post("/updateSection", auth, isInstructor, updateSection)
+router.post("/deleteSection", auth, isInstructor, deleteSection)
 router.post("/addSubSection", auth, isInstructor, createSubSection);
-router.put("/updateSubSection", auth, isInstructor, updateSubSection);
-router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
+router.post("/updateSubSection", auth, isInstructor, updateSubSection)
+router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
 router.get("/showAllCourses", showAllCourses);
 router.post("/getCourseDetails", getCourseDetails);
 

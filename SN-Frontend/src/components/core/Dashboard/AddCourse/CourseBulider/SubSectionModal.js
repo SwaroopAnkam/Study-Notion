@@ -103,8 +103,6 @@ export default function SubSectionModal({
       }
       return;
     }
-    console.log("printing modeldata", modalData);
-    console.log("printing data", data);
 
     const formData = new FormData();
     formData.append("sectionId", modalData);
@@ -112,10 +110,7 @@ export default function SubSectionModal({
     formData.append("description", data.lectureDesc);
     formData.append("video", data.lectureVideo);
     setLoading(true);
-    console.log("printing formdata0", formData);
-    for (const pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+  
     const result = await createSubSection(formData, token);
     console.log("printing result", result);
     if (result) {

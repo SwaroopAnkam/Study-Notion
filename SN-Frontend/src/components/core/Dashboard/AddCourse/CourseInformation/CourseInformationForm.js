@@ -229,8 +229,8 @@ export default function CourseInformationForm() {
             Choose a Category
           </option>
           {!loading &&
-            courseCategories?.map((category, indx) => (
-              <option key={indx} value={category?._id}>
+            courseCategories?.map((category, index) => (
+              <option key={index} value={category?._id}>
                 {category?.name}
               </option>
             ))}
