@@ -157,7 +157,7 @@ export const createSubSection = async (data, token) => {
       Authorization: `Bearer ${token}`,
     });
     console.log("CREATE SUB-SECTION API RESPONSE............", response);
-    if (!response?.data?.succcess) {
+    if (!response?.data?.success) {
       throw new Error("Could Not Add Lecture");
     }
     toast.success("Lecture Added");
