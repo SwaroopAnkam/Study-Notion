@@ -8,11 +8,13 @@ const {
   getInstructorCourses,
   editCourse,
   getFullCourseDetails,
+  deleteCourse,
 } = require("../controllers/Course");
 
 const {
   createCategory,
   showAllCategories,
+  categoryPageDetails,
 } = require("../controllers/Category");
 
 const {
@@ -52,9 +54,11 @@ router.get("/showAllCourses", showAllCourses);
 router.post("/getCourseDetails", getCourseDetails);
 router.post("/editCourse", auth, isInstructor, editCourse);
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.delete("/deleteCourse", deleteCourse)
 
 router.post("/createCategory", auth, isAdmin, createCategory);
 router.get("/showAllCategories", showAllCategories);
+router.post("/getCategoryPageDetails", categoryPageDetails);
 
 router.post("/createRating", auth, isStudent, createRating);
 router.get("/getAverageRating", getAverageRating);
