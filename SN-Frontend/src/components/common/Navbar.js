@@ -71,7 +71,7 @@ function Navbar() {
                             {
                               subLinks
                               ?.filter(
-                                (subLink) => subLink //?.courses?.length > 0
+                                (subLink) => subLink//?.courses?.length > 0
                               )
                               ?.map((subLink, i) => (
                                 <Link

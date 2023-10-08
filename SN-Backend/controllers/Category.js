@@ -19,7 +19,6 @@ exports.createCategory = async (req, res) => {
       description: description,
     });
 
-    console.log(categoryDetails);
 
     return res.status(200).json({
       success: true,
@@ -55,8 +54,6 @@ exports.categoryPageDetails = async (req, res) => {
         .json({ success: false, message: "Category not found" });
     }
 
-    console.log("selectedCategory",selectedCategory);
-
     if (selectedCategory.courses.length === 0) {
       console.log("No courses found for the selected category.");
       return res.status(404).json({
@@ -64,7 +61,6 @@ exports.categoryPageDetails = async (req, res) => {
         message: "No courses found for the selected category.",
       });
     }
-    console.log("xnxx");
     const categoriesExceptSelected = await Category.find({
       _id: { $ne: categoryId },
     });
