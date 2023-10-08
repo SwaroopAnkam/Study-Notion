@@ -140,16 +140,10 @@ exports.showAllCourses = async (req, res) => {
 
 exports.getCourseDetails = async (req, res) => {
   try {
-    const { courseId } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Course ID",
-      });
-    }
-
-    const allCourseDetails = await Course.find({ _id: courseId })
+    const { courseId } = req.body
+    const courseDetails = await Course.findOne({
+      _id: courseId,
+    })
       .populate({
         path: "instructor",
         populate: {
@@ -157,52 +151,54 @@ exports.getCourseDetails = async (req, res) => {
         },
       })
       .populate("category")
+      .populate("ratingAndReviews")
       .populate({
         path: "courseContent",
         populate: {
           path: "subSections",
+          select: "-videoUrl",
         },
       })
-      .exec();
+      .exec()
 
-    if (RatingAndReviews.length !== 0) {
-      const allCourseDetails = await Course.find({ _id: courseId })
-        .populate({
-          path: "instructor",
-          populate: {
-            path: "additionalDetails",
-          },
-        })
-        .populate("category")
-        .populate("ratingAndreviews")
-        .populate({
-          path: "courseContent",
-          populate: {
-            path: "subSections",
-          },
-        })
-        .exec();
-    }
-
-    if (!allCourseDetails) {
+    if (!courseDetails) {
       return res.status(400).json({
         success: false,
-        message: `Could Not Find the Course with ${courseId}`,
-      });
+        message: `Could not find course with id: ${courseId}`,
+      })
     }
+
+    // if (courseDetails.status === "Draft") {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: `Accessing a draft course is forbidden`,
+    //   });
+    // }
+
+    let totalDurationInSeconds = 0
+    courseDetails.courseContent.forEach((content) => {
+      content.subSections.forEach((subSection) => {
+        const timeDurationInSeconds = parseInt(subSection.timeDuration)
+        totalDurationInSeconds += timeDurationInSeconds
+      })
+    })
+
+    const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+
     return res.status(200).json({
       success: true,
-      message: "Course Details fetched successfully",
-      data: allCourseDetails,
-    });
+      data: {
+        courseDetails,
+        totalDuration,
+      },
+    })
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: error.message,
-    });
+    })
   }
-};
+}
 
 exports.editCourse = async (req, res) => {
   try {
