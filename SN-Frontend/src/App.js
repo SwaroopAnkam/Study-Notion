@@ -23,7 +23,9 @@ import AddCourse from "./components/core/Dashboard/AddCourse";
 import MyCourses from "./components/core/Dashboard/MyCourses";
 import EditCourse from "./components/core/Dashboard/EditCourse";
 import Catalog from "./pages/Catalog";
+import ViewCourse from "./pages/ViewCourse";
 import CourseDetails from "./pages/CourseDetails";
+import VideoDetails from "./components/core/ViewCourse/VideoDetails";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,7 +38,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="catalog/:catalogName" element={<Catalog />} />
-        <Route path="courses/:courseId" element={<CourseDetails/>} />
+        <Route path="courses/:courseId" element={<CourseDetails />} />
         <Route
           path="signup"
           element={
@@ -86,7 +88,6 @@ function App() {
           }
         />
         <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<Error />} />
         <Route
           element={
             <PrivateRoute>
@@ -116,6 +117,23 @@ function App() {
             </>
           )}
         </Route>
+        <Route
+          element={
+            <PrivateRoute>
+              <ViewCourse />
+            </PrivateRoute>
+          }
+        >
+          {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+            <>
+              <Route
+                path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId"
+                element={<VideoDetails />}
+              />
+            </>
+          )}
+        </Route>
+        <Route path="*" element={<Error />} />
       </Routes>
     </div>
   );
