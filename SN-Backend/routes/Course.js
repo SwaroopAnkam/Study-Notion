@@ -36,6 +36,10 @@ const {
 } = require("../controllers/SubSection");
 
 const {
+  updateCourseProgress
+} = require("../controllers/CourseProgress");
+
+const {
   auth,
   isStudent,
   isInstructor,
@@ -55,6 +59,7 @@ router.post("/getCourseDetails", getCourseDetails);
 router.post("/editCourse", auth, isInstructor, editCourse);
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
 router.delete("/deleteCourse", deleteCourse)
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 
 router.post("/createCategory", auth, isAdmin, createCategory);
 router.get("/showAllCategories", showAllCategories);

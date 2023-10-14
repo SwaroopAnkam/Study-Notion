@@ -51,7 +51,7 @@ exports.capturePayment = async (req, res) => {
     receipt: Math.random(Date.now()).toString(),
   };
 
-  console.log("asdfghjkl")
+  console.log("asdfghjkl");
 
   try {
     const paymentResponse = await razorpayInstance.orders.create(options);
@@ -91,9 +91,8 @@ exports.verifyPayment = async (req, res) => {
     .digest("hex");
 
   if (expectedSignature === razorpay_signature) {
-   
     await enrollStudents(courses, userId, res);
-    
+
     return res.status(200).json({ success: true, message: "Payment Verified" });
   }
   return res.status(200).json({ success: "false", message: "Payment Failed" });
@@ -101,19 +100,14 @@ exports.verifyPayment = async (req, res) => {
 
 const enrollStudents = async (courses, userId, res) => {
   if (!courses || !userId) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Please Provide data for Courses or UserId",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Please Provide data for Courses or UserId",
+    });
   }
-
-  console.log("asdfghjkl",enrollStudents);
 
   for (const courseId of courses) {
     try {
-      
       const enrolledCourse = await Course.findOneAndUpdate(
         { _id: courseId },
         { $push: { studentsEnrolled: userId } },
@@ -126,18 +120,23 @@ const enrollStudents = async (courses, userId, res) => {
           .json({ success: false, message: "Course not Found" });
       }
 
-      
+      const courseProgress = await CourseProgress.create({
+        courseID: courseId,
+        userId: userId,
+        completedVideos: [],
+      });
+
       const enrolledStudent = await User.findByIdAndUpdate(
         userId,
         {
           $push: {
             courses: courseId,
+            courseProgress: courseProgress._id,
           },
         },
         { new: true }
       );
 
-     
       const emailResponse = await mailSender(
         enrolledStudent.email,
         `Successfully Enrolled into ${enrolledCourse.courseName}`,
@@ -158,7 +157,7 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
   const { orderId, paymentId, amount } = req.body;
 
   const userId = req.user.id;
-  console.log("printing userid",userId)
+  console.log("printing userid", userId);
 
   if (!orderId || !paymentId || !amount || !userId) {
     return res
@@ -167,10 +166,9 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
   }
 
   try {
-   
     const enrolledStudent = await User.findById(userId);
 
-  console.log("enrilled student",enrolledStudent);
+    console.log("enrilled student", enrolledStudent);
 
     await mailSender(
       enrolledStudent.email,
