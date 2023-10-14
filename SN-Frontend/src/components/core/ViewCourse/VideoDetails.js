@@ -28,12 +28,11 @@ const VideoDetails = () => {
       if (!courseId && !sectionId && !subSectionId) {
         navigate("/dashboard/enrolled-courses");
       } else {
-
         const filteredData = courseSectionData.filter(
           (course) => course._id === sectionId
         );
 
-        const filteredVideoData = filteredData?.[0].subsections.filter(
+        const filteredVideoData = filteredData?.[0].subSections.filter(
           (data) => data._id === subSectionId
         );
 
@@ -51,7 +50,7 @@ const VideoDetails = () => {
 
     const currentSubSectionIndex = courseSectionData[
       currentSectionIndex
-    ].subSectionId.findIndex((data) => data._id === subSectionId);
+    ].subSections.findIndex((data) => data._id === subSectionId);
     if (currentSectionIndex === 0 && currentSubSectionIndex === 0) {
       return true;
     } else {
@@ -69,7 +68,7 @@ const VideoDetails = () => {
 
     const currentSubSectionIndex = courseSectionData[
       currentSectionIndex
-    ].subSectionId.findIndex((data) => data._id === subSectionId);
+    ].subSections.findIndex((data) => data._id === subSectionId);
 
     if (
       currentSectionIndex === courseSectionData.length - 1 &&
@@ -91,23 +90,22 @@ const VideoDetails = () => {
 
     const currentSubSectionIndex = courseSectionData[
       currentSectionIndex
-    ].subSectionId.findIndex((data) => data._id === subSectionId);
+    ].subSections.findIndex((data) => data._id === subSectionId);
 
     if (currentSubSectionIndex !== noOfSubSections - 1) {
       const nextSubSectionId =
         courseSectionData[currentSectionIndex].subSections[
           currentSectionIndex + 1
         ]._id;
-    
+
       navigate(
         `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`
       );
     } else {
-      
       const nextSectionId = courseSectionData[currentSectionIndex + 1]._id;
       const nextSubSectionId =
-        courseSectionData[currentSectionIndex + 1].subsections[0]._id;
-      
+        courseSectionData[currentSectionIndex + 1].subSections[0]._id;
+
       navigate(
         `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
       );
@@ -124,28 +122,26 @@ const VideoDetails = () => {
 
     const currentSubSectionIndex = courseSectionData[
       currentSectionIndex
-    ].subSectionId.findIndex((data) => data._id === subSectionId);
+    ].subSections.findIndex((data) => data._id === subSectionId);
 
     if (currentSubSectionIndex != 0) {
-      
       const prevSubSectionId =
         courseSectionData[currentSectionIndex].subSections[
           currentSubSectionIndex - 1
         ];
-      
+
       navigate(
         `/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}`
       );
     } else {
-     
       const prevSectionId = courseSectionData[currentSectionIndex - 1]._id;
       const prevSubSectionLength =
         courseSectionData[currentSectionIndex - 1].subSections.length;
       const prevSubSectionId =
-        courseSectionData[currentSectionIndex - 1].subsections[
+        courseSectionData[currentSectionIndex - 1].subSections[
           prevSubSectionLength - 1
         ]._id;
-    
+
       navigate(
         `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}`
       );
@@ -153,7 +149,7 @@ const VideoDetails = () => {
   };
 
   const handleLectureCompletion = async () => {
-    ///dummy code, we will replace it witht the actual call
+    ///dummy code, we will replace it with the actual call
     setLoading(true);
     //PENDING - > Course Progress PENDING
     const res = await markLectureAsComplete(
