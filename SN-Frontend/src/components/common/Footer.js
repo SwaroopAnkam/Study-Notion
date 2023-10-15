@@ -1,11 +1,9 @@
 import React from "react";
+import HighlightText from "../core/HomePage/HighlightText";
 import { FooterLink2 } from "../../data/footer-links";
 import { Link } from "react-router-dom";
-
 import Logo from "../../assets/Logo/Logo-Full-Light.png";
-
 import { FaFacebook, FaGoogle, FaTwitter, FaYoutube } from "react-icons/fa";
-
 const BottomFooter = ["Privacy Policy", "Cookie Policy", "Terms"];
 const Resources = [
   "Articles",
@@ -165,8 +163,7 @@ const Footer = () => {
               );
             })}
           </div>
-
-          <div className="text-center">Made By Swaroop Ankam</div>
+          <HighlightText text={"Made by Swaroop Ankam"} />
         </div>
       </div>
     </div>

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai";
-import { BsCheckLg, BsChevronDown } from "react-icons/bs";
+import { BsChevronDown } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { Link, matchPath, useLocation } from "react-router-dom";
-
 import logo from "../../assets/Logo/Logo-Full-Light.png";
 import { NavbarLinks } from "../../data/navbar-links";
 import { apiConnector } from "../../services/apiConnector";
@@ -21,7 +20,7 @@ function Navbar() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setLoading(true);
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API);

@@ -50,7 +50,7 @@ const About = () => {
                 Our Founding Story
               </h1>
               <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
-                Our e-learning platform was born out of a shared vision and
+               Our e-learning platform was born out of a shared vision and
                 passion for transforming education. It all began with a group of
                 educators, technologists, and lifelong learners who recognized
                 the need for accessible, flexible, and high-quality learning
