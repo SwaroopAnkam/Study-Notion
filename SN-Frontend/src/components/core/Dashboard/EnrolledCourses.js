@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import { getUserEnrolledCourses } from "../../../services/operations/profileAPI";
 
 export default function EnrolledCourses() {
@@ -11,16 +9,17 @@ export default function EnrolledCourses() {
   const navigate = useNavigate();
 
   const [enrolledCourses, setEnrolledCourses] = useState(null);
-  const getEnrolledCourses = async () => {
-    try {
-      const res = await getUserEnrolledCourses(token);
-      setEnrolledCourses(res);
-    } catch (error) {
-      console.log("Could not fetch enrolled courses.");
-    }
-  };
+
   useEffect(() => {
-    getEnrolledCourses();
+    (async () => {
+      try {
+        const res = await getUserEnrolledCourses(token);
+        const filterPublishCourse = res.filter((ele) => ele.status !== "Draft");
+        setEnrolledCourses(filterPublishCourse);
+      } catch (error) {
+        console.log("Could not fetch enrolled courses.");
+      }
+    })();
   }, []);
 
   return (
@@ -33,17 +32,14 @@ export default function EnrolledCourses() {
       ) : !enrolledCourses.length ? (
         <p className="grid h-[10vh] w-full place-content-center text-richblack-5">
           You have not enrolled in any course yet.
-          {/* TODO: Modify this Empty State */}
         </p>
       ) : (
         <div className="my-8 text-richblack-5">
-          {/* Headings */}
           <div className="flex rounded-t-lg bg-richblack-500 ">
             <p className="w-[45%] px-5 py-3">Course Name</p>
             <p className="w-1/4 px-2 py-3">Duration</p>
             <p className="flex-1 px-2 py-3">Progress</p>
           </div>
-          {/* Course Names */}
           {enrolledCourses.map((course, i, arr) => (
             <div
               className={`flex items-center border border-richblack-700 ${
@@ -57,7 +53,6 @@ export default function EnrolledCourses() {
                   navigate(
                     `/view-course/${course?._id}/section/${course?.courseContent[0]?._id}/sub-section/${course?.courseContent?.[0]?.subSections?.[0]?._id}`
                   );
-                  
                 }}
               >
                 <img
