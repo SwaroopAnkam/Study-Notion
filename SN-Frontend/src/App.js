@@ -26,7 +26,7 @@ import Catalog from "./pages/Catalog";
 import ViewCourse from "./pages/ViewCourse";
 import CourseDetails from "./pages/CourseDetails";
 import VideoDetails from "./components/core/ViewCourse/VideoDetails";
-import Instructor from "./components/core/Dashboard/InstructorDashboard/Instructor";
+import Instructor from "./components/core/Dashboard/Instructor";
 
 function App() {
   const dispatch = useDispatch();

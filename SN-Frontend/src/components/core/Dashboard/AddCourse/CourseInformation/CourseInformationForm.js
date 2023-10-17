@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { HiOutlineCurrencyRupee } from "react-icons/hi";
 import { MdNavigateNext } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   addCourseDetails,
   editCourseDetails,

@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { MdNavigateNext } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   createSection,
   updateSection,
@@ -62,7 +61,6 @@ export default function CourseBuilderForm() {
       );
     }
     if (result) {
-      // console.log("section result", result)
       dispatch(setCourse(result));
       setEditSectionName(null);
       setValue("sectionName", "");
@@ -147,7 +145,6 @@ export default function CourseBuilderForm() {
       {course.courseContent.length > 0 && (
         <NestedView handleChangeEditSectionName={handleChangeEditSectionName} />
       )}
-      {/* Next Prev Button */}
       <div className="flex justify-end gap-x-3">
         <button
           onClick={goBack}

@@ -5,7 +5,6 @@ import { MdEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { RxDropdownMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   deleteSection,
   deleteSubSection,
@@ -18,11 +17,9 @@ export default function NestedView({ handleChangeEditSectionName }) {
   const { course } = useSelector((state) => state.course);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  // States to keep track of mode of modal [add, view, edit]
   const [addSubSection, setAddSubsection] = useState(null);
   const [viewSubSection, setViewSubSection] = useState(null);
   const [editSubSection, setEditSubSection] = useState(null);
-  // to keep track of confirmation modal
   const [confirmationModal, setConfirmationModal] = useState(null);
 
   const handleDeleleSection = async (sectionId) => {
@@ -31,7 +28,7 @@ export default function NestedView({ handleChangeEditSectionName }) {
       courseId: course._id,
       token,
     });
-    console.log("PRINTING RESULT", result)
+    console.log("PRINTING RESULT", result);
     if (result) {
       dispatch(setCourse(result));
     }
@@ -41,7 +38,6 @@ export default function NestedView({ handleChangeEditSectionName }) {
   const handleDeleteSubSection = async (subSectionId, sectionId) => {
     const result = await deleteSubSection({ subSectionId, sectionId, token });
     if (result) {
-      // update the structure of course
       const updatedCourseContent = course.courseContent.map((section) =>
         section._id === sectionId ? result : section
       );
@@ -58,9 +54,7 @@ export default function NestedView({ handleChangeEditSectionName }) {
         id="nestedViewContainer"
       >
         {course?.courseContent?.map((section) => (
-          // Section Dropdown
           <details key={section._id} open>
-            {/* Section Dropdown Content */}
             <summary className="flex cursor-pointer items-center justify-between border-b-2 border-b-richblack-600 py-2">
               <div className="flex items-center gap-x-3">
                 <RxDropdownMenu className="text-2xl text-richblack-50" />
@@ -98,7 +92,6 @@ export default function NestedView({ handleChangeEditSectionName }) {
               </div>
             </summary>
             <div className="px-6 pb-4">
-              {/* Render All Sub Sections Within a Section */}
               {section?.subSections?.map((data) => (
                 <div
                   key={data?._id}
@@ -140,7 +133,6 @@ export default function NestedView({ handleChangeEditSectionName }) {
                   </div>
                 </div>
               ))}
-              {/* Add New Lecture to Section */}
               <button
                 onClick={() => setAddSubsection(section._id)}
                 className="mt-3 flex items-center gap-x-1 text-yellow-50"
@@ -152,7 +144,6 @@ export default function NestedView({ handleChangeEditSectionName }) {
           </details>
         ))}
       </div>
-      {/* Modal Display */}
       {addSubSection ? (
         <SubSectionModal
           modalData={addSubSection}

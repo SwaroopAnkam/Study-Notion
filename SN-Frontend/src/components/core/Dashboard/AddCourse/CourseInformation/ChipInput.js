@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { MdClose } from "react-icons/md";
 import { useSelector } from "react-redux";
 
@@ -10,7 +9,6 @@ export default function ChipInput({
   register,
   errors,
   setValue,
-  getValues,
 }) {
   const { editCourse, course } = useSelector((state) => state.course);
 
