@@ -1,4 +1,5 @@
 import "./App.css";
+import { useEffect } from "react"
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/common/Navbar";
@@ -31,13 +32,22 @@ import Instructor from "./components/core/Dashboard/Instructor";
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { user } = useSelector((state) => state.profile);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      const token = JSON.parse(localStorage.getItem("token"))
+      dispatch(getUserDetails(token, navigate))
+    }
+  }, [])
+
   return (
     <div className="w-screen min-h-screen bg-richblack-900 flex flex-col font-inter">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="catalog/:catalogName" element={<Catalog />} />
         <Route path="courses/:courseId" element={<CourseDetails />} />
         <Route
@@ -80,8 +90,6 @@ function App() {
             </OpenRoute>
           }
         />
-        <Route path="about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
         <Route
           element={
             <PrivateRoute>

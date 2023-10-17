@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { markLectureAsComplete } from "../../../services/operations/courseDetailsAPI";
 import { updateCompletedLectures } from "../../../slices/viewCourseSlice";
-import { Player } from "video-react";
 import "video-react/dist/video-react.css";
-import { AiFillPlayCircle } from "react-icons/ai";
+import { BigPlayButton, Player } from "video-react"
 import IconBtn from "../../common/IconBtn";
 
 const VideoDetails = () => {
@@ -17,13 +16,13 @@ const VideoDetails = () => {
   const { token } = useSelector((state) => state.auth);
   const { courseSectionData, courseEntireData, completedLectures } =
     useSelector((state) => state.viewCourse);
-
   const [videoData, setVideoData] = useState([]);
+  const [previewSource, setPreviewSource] = useState("")
   const [videoEnded, setVideoEnded] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const setVideoSpecificDetails = async () => {
+    ;(async () => {
       if (!courseSectionData.length) return;
       if (!courseId && !sectionId && !subSectionId) {
         navigate("/dashboard/enrolled-courses");
@@ -37,11 +36,11 @@ const VideoDetails = () => {
         );
 
         setVideoData(filteredVideoData[0]);
+        setPreviewSource(courseEntireData.thumbnail)
         setVideoEnded(false);
       }
-    };
-    setVideoSpecificDetails();
-  }, [courseSectionData, courseEntireData, location.pathname]);
+    })()
+  }, [courseSectionData, courseEntireData, location.pathname])
 
   const isFirstVideo = () => {
     const currentSectionIndex = courseSectionData.findIndex(
@@ -116,10 +115,6 @@ const VideoDetails = () => {
     const currentSectionIndex = courseSectionData.findIndex(
       (data) => data._id === sectionId
     );
-
-    const noOfSubSections =
-      courseSectionData[currentSectionIndex].subSections.length;
-
     const currentSubSectionIndex = courseSectionData[
       currentSectionIndex
     ].subSections.findIndex((data) => data._id === subSectionId);
@@ -149,23 +144,24 @@ const VideoDetails = () => {
   };
 
   const handleLectureCompletion = async () => {
-    ///dummy code, we will replace it with the actual call
     setLoading(true);
-    //PENDING - > Course Progress PENDING
     const res = await markLectureAsComplete(
       { courseId: courseId, subSectionId: subSectionId },
       token
     );
-    //state update
     if (res) {
       dispatch(updateCompletedLectures(subSectionId));
     }
     setLoading(false);
   };
   return (
-    <div>
+    <div className="flex flex-col gap-5 text-white">
       {!videoData ? (
-        <div>No Data Found</div>
+        <img
+          src={previewSource}
+          alt="Preview"
+          className="h-full w-full rounded-md object-cover"
+        />
       ) : (
         <Player
           ref={playerRef}
@@ -174,15 +170,19 @@ const VideoDetails = () => {
           onEnded={() => setVideoEnded(true)}
           src={videoData?.videoUrl}
         >
-          <AiFillPlayCircle />
+        <BigPlayButton position="center" />
 
           {videoEnded && (
-            <div>
+            <div style={{
+                backgroundImage:
+                  "linear-gradient(to top, rgb(0, 0, 0), rgba(0,0,0,0.7), rgba(0,0,0,0.5), rgba(0,0,0,0.1)",
+              }}>
               {!completedLectures.includes(subSectionId) && (
                 <IconBtn
                   disabled={loading}
                   onclick={() => handleLectureCompletion()}
                   text={!loading ? "Mark As Completed" : "Loading..."}
+                  customClasses="text-xl max-w-max px-4 mx-auto"
                 />
               )}
 
@@ -195,10 +195,10 @@ const VideoDetails = () => {
                   }
                 }}
                 text="Rewatch"
-                customClasses="text-xl"
+                customClasses="text-xl max-w-max px-4 mx-auto mt-2"
               />
 
-              <div>
+              <div className="mt-10 flex min-w-[250px] justify-center gap-x-4 text-xl">
                 {!isFirstVideo() && (
                   <button
                     disabled={loading}
@@ -222,8 +222,8 @@ const VideoDetails = () => {
           )}
         </Player>
       )}
-      <h1>{videoData?.title}</h1>
-      <p>{videoData?.description}</p>
+      <h1 className="mt-4 text-3xl font-semibold">{videoData?.title}</h1>
+      <p className="pt-2 pb-6">{videoData?.description}</p>
     </div>
   );
 };
