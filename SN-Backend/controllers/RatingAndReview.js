@@ -27,17 +27,17 @@ exports.createRating = async (req, res) => {
       });
     }
 
-    const alreadyReviewed = await RatingAndReview.findOne({
-      user: userId,
-      course: courseId,
-    });
+    // const alreadyReviewed = await RatingAndReview.findOne({
+    //   user: userId,
+    //   course: courseId,
+    // });
 
-    if (!alreadyReviewed) {
-      return res.status(403).json({
-        success: false,
-        message: "Course is Already Reviewed by the User",
-      });
-    }
+    // if (!alreadyReviewed) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Course is Already Reviewed by the User",
+    //   });
+    // }
 
     const ratingAndReview = await RatingAndReview.create({
       rating,
@@ -55,8 +55,6 @@ exports.createRating = async (req, res) => {
       },
       { new: true }
     );
-
-    console.log(updatedCourseDetails);
 
     return res.status(201).json({
       success: true,

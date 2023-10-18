@@ -2,7 +2,7 @@ const Course = require("../models/Course");
 const CourseProgress = require("../models/CourseProgress");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
-const { uploadImageToCloudinary } = require("../utils/mediaUploader");
+const { uploadMediaToCloudinary } = require("../utils/mediaUploader");
 const { convertSecondsToDuration } = require("../utils/secToDuration");
 
 exports.updateProfile = async (req, res) => {

@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const {
   paymentSuccessEmail,
 } = require("../mailTemplates/templates/paymentSuccessEmail");
+const CourseProgress = require("../models/CourseProgress")
 const crypto = require("crypto");
 
 exports.capturePayment = async (req, res) => {

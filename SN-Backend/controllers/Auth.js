@@ -4,7 +4,6 @@ const Profile = require("../models/Profile");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
 const {
   passwordUpdated,
 } = require("../mailTemplates/templates/passwordUpdateEmail");
@@ -74,7 +73,6 @@ exports.signUp = async (req, res) => {
       email,
       password,
       confirmPassword,
-      contactNumber,
       accountType,
       otp,
     } = req.body;
@@ -84,7 +82,6 @@ exports.signUp = async (req, res) => {
       !lastName ||
       !email ||
       !confirmPassword ||
-      // !contactNumber ||
       !otp
     ) {
       return res.status(400).json({

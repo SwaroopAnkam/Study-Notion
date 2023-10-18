@@ -1,5 +1,4 @@
 import { toast } from "react-hot-toast";
-
 import { setLoading, setUser } from "../../slices/profileSlice";
 import { apiConnector } from "../apiConnector";
 import { profileEndpoints } from "../apis";
@@ -49,6 +48,7 @@ export async function getUserEnrolledCourses(token) {
       }
     );
     console.log("AFTER Calling BACKEND API FOR ENROLLED COURSES");
+    console.log(response);
     if (!response.data.success) {
       throw new Error(response.data.message);
     }

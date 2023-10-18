@@ -13,6 +13,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Error from "./pages/Error";
 import MyProfile from "./components/core/Dashboard/MyProfile";
+import { getUserDetails } from "./services/operations/profileAPI"
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import { useDispatch, useSelector } from "react-redux";
