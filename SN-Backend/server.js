@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://studynotion-frontend-two.vercel.app/",
+    origin: "https://studynotion-frontend-two.vercel.app",
     credentials: true,
   })
 );
